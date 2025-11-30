@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<ColorCorrectionCollection xmlns="urn:ASC:CDL:v1.01">
+	<ColorCorrection id="0030_BJB_0132_BG01_V01">
+		<SOPNode>
+			<Slope>1.0003 1.0000 1.0003</Slope>
+			<Offset>-0.0005 0.0013 -0.0003</Offset>
+			<Power>0.9886 0.9886 0.9886</Power>
+			<GUIPrinterPointOffset>0.0000 0.0000 0.0000</GUIPrinterPointOffset>
+		</SOPNode>
+		<SatNode>
+			<Saturation>1.0000</Saturation>
+		</SatNode>
+	</ColorCorrection>
+</ColorCorrectionCollection>

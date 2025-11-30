@@ -1,0 +1,258 @@
+# You can set a default for any task attributes here. The most useful thing here 
+# is for overriding the executable used for certain Task types. Such as if you 
+# have a custom Nuke wrapper that sets up the environment before launching Nuke.
+# You can also do things like set a default for Root/Write/Read node knobs in 
+# NukeRender tasks.
+task_attribute_defaults:
+    NukeRender:
+        command_line_executable: "C:/Program Files/Nuke16.0v6/Nuke16.0.exe"
+        command_line_executable_args: ["-i", "-t", "$WOLFKROW_DEFAULT_COMMAND_LINE_EXECUTABLE_ARGS"]
+        # Ensure our nuke renders are using OCIO color management by default. This 
+        # is not necessary if your Nuke set up is already settings these values
+        root_node_properties:
+            colorManagement: "OCIO"
+            OCIO_config: "aces_1.2"
+
+
+replacements:
+    #shotgun_site: "$SHOTGUN_SITE_URL"
+
+    root_path: "$WOLFKROW_DEMO_ROOT"
+    project_root: "{root_path}/shows/{project_name}"
+    sequence_root: "{project_root}/shots/{sequence}"
+    shot_root: "{sequence_root}/{shot}"
+
+    ffmpeg: "C:/ffmpeg/bin/ffmpeg_safe.bat"
+
+    # ===================
+    # File Path locations
+    # ===================
+    
+    # Plate Ingest
+    plate_publish_root: "{shot_root}/publish/plates/{publish_name}/v{version}"
+
+    plate_publish_path:          "{plate_publish_root}/ingested/exr/IP_{shot}_{publish_name}.%04d.exr"
+    original_plate_publish_path: "{plate_publish_root}/original/exr/OP_{shot}_{publish_name}.%04d.exr"
+    plate_grade_publish_path:    "{plate_publish_root}/grade/G_{shot}_{publish_name}.ccc"
+    plate_lut_publish_path:      "{plate_publish_root}/lut/L_{shot}_{publish_name}.{grade_extension}"
+    plate_mov_publish_path:      "{plate_publish_root}/mov/IP_{shot}_{publish_name}.mov"
+
+    shot_grade_publish_path:    "{project_root}/publish/OCIO/{shot}.ccc"
+
+    # Artist Publish
+    publish_root: "{shot_root}/publish/{publish_type}/{publish_name}/v{version:>03}"
+
+    render_publish_path:     "{publish_root}/render/{shot}_{publish_name}_v{version:>03}.%04d.{render_extension}"
+    scene_publish_path:   "{publish_root}/scene/{shot}_{publish_name}_v{version:>03}.{scene_extension}"
+    mov_publish_path:     "{publish_root}/mov/{shot}_{publish_name}_v{version:>03}.mov"
+
+    # Client Sends
+    client_root: "{project_root}/client_io/out/DATE<%Y_%m_%d>/client_package_{package_number}"
+
+    client_basename: "{shot}_{export_type}_v{client_version:>03}"
+
+    client_export_exr_path:       "{client_root}/exr/{client_basename}/{client_basename}.%04d.exr"
+    client_export_shot_grade_path: "{client_root}/exr/{client_basename}.ccc"
+    client_export_mov_path_h264:  "{client_root}/mjpeg/{client_basename}.mov"
+    client_export_mov_path_dnxhd: "{client_root}/dnxhd/{client_basename}.mov"
+
+# You can use #resolver tokens to look for a file in multiple locations. The paths
+# below will be searched in order until the file is found.
+resolver_search_paths:
+    - "{shot_root}/_config"
+    - "{sequence_root}/_config"
+    - "{project_root}/_config"
+    - "{root_path}/_config"
+
+tasks:
+    ###############
+    # Ingest
+    ###############
+
+    process_plates: 
+        task_type: NukeRender
+        dependencies: []
+        scripts:
+            - "#resolver/nuke_scripts/acesap0_to_acescg.nk"
+            - "#resolver/nuke_scripts/ingest_conform.nk"
+        source: "{input_path}"
+        destination: "{plate_publish_path}"
+        file_type: "exr"
+        start_frame: "{start_frame}"
+        end_frame: "{end_frame}"
+
+    copy_original_plate:
+        task_type: FileCopy
+        source: "{input_path}"
+        destination: "{original_plate_publish_path}"
+        start_frame: "{start_frame}"
+        end_frame: "{end_frame}"
+
+    copy_grade_file_to_shot:
+        task_type: FileCopy
+        source: "{input_grade_path}"
+        destination: "{plate_grade_publish_path}"
+
+    copy_grade_file_to_show:
+        task_type: FileCopy
+        source: "{input_grade_path}"
+        destination: "{shot_grade_publish_path}"
+
+    # copy_lut_file:
+    #    task_type: FileCopy
+    #    source: "{input_lut_path}"
+    #    destination: "{plate_lut_publish_path}"
+
+    generate_plate_quicktime:
+        task_type: NukeRender
+        dependencies: [process_plates, copy_grade_file_to_show]
+        scripts:
+            - "#resolver/nuke_scripts/apply_qt_format.nk"
+            - "#resolver/nuke_scripts/apply_shot_color.nk"
+        source: "{plate_publish_path}"
+        destination: "{plate_mov_publish_path}"
+        file_type: mov
+        codec: "H.264"
+        start_frame: "{start_frame}"
+        end_frame: "{end_frame}"
+        render_start_frame: "{start_frame_minusOne}"
+        additional_write_node_properties:
+            mov64_quality_min: 10
+            mov64_quality_max: 22
+
+    ##############
+    # Publish
+    ##############
+
+    copy_to_publish:
+        task_type: FileCopy
+        dependencies: []
+        source: "{input_path}"
+        destination: "{render_publish_path}"
+        start_frame: "{start_frame}"
+        end_frame: "{end_frame}"
+
+    copy_render_scene:
+        task_type: FileCopy
+        dependencies: []
+        source: "{input_render_scene}"
+        destination: "{scene_publish_path}"
+
+    generate_quicktime:
+        task_type: NukeRender
+        dependencies: []
+        scripts:
+            - "#resolver/nuke_scripts/apply_qt_format.nk"
+            - "#resolver/nuke_scripts/apply_shot_color.nk"
+        source: "{input_path}"
+        destination: "{mov_publish_path}"
+        file_type: mov
+        codec: "H.264"
+        start_frame: "{start_frame}"
+        end_frame: "{end_frame}"
+        additional_write_node_properties:
+            mov64_quality_min: 10
+            mov64_quality_max: 22
+
+    # There are also built in SG related tasks which allow you to create/update Entities in SG. 
+    # update_sg_version_data:
+    #    task_type: ShotgunUpdate
+
+    # upload_sg_version:
+    #    task_type: UploadMedia
+
+    ##############
+    # Client Sends
+    ##############
+
+    client_export_exr:
+        task_type: NukeRender
+        dependencies: []
+        scripts:
+            - "#resolver/nuke_scripts/acescg_to_acesap0.nk"
+        source: "{input_path}"
+        destination: "{client_export_exr_path}"
+        file_type: "exr"
+        compression: 3 # "PIZ Wavelet (32 scanlines)"
+        start_frame: "{start_frame}"
+        end_frame: "{end_frame}"
+
+    client_export_shot_grade:
+        task_type: FileCopy
+        source: "{shot_grade_publish_path}"
+        destination: "{client_export_shot_grade_path}"
+
+    client_export_mov_jpegs:
+        task_type: NukeRender
+        dependencies: []
+        scripts:
+            - "#resolver/nuke_scripts/apply_qt_format.nk"
+            - "#resolver/nuke_scripts/apply_shot_color.nk"
+            - "#resolver/nuke_scripts/client_burnin.nk"
+            - "#resolver/nuke_scripts/client_slate.nk"
+        source: "{input_path}"
+        destination: "{temp_dir}/jpeg_temps/{client_basename}.%04d.jpg"
+        file_type: jpeg
+        _jpeg_quality: 80
+        _jpeg_sub_sampling: "4:2:2"
+        start_frame: "{start_frame}"
+        end_frame: "{end_frame}"
+        render_start_frame: "{start_frame_minusOne}"
+
+    client_export_mov_mjpeg_encode:
+        task_type: "CommandLine"
+        dependencies: [client_export_mov_jpegs]
+        script: "{ffmpeg}"
+        args: [
+            "-y", 
+            "-framerate", "24", 
+            "-start_number", "{start_frame_minusOne}", 
+            "-i", "{temp_dir}/jpeg_temps/{client_basename}.%04d.jpg", 
+            "-c:v", "mjpeg", 
+            "{client_export_mov_path_h264}"
+        ]
+
+    client_export_mov_dnxhd:
+        task_type: NukeRender
+        dependencies: []
+        scripts:
+        - "#resolver/nuke_scripts/apply_qt_format.nk"
+        - "#resolver/nuke_scripts/apply_shot_color.nk"
+        - "#resolver/nuke_scripts/client_burnin.nk"
+        - "#resolver/nuke_scripts/client_slate.nk"
+        source: "{input_path}"
+        destination: "{client_export_mov_path_dnxhd}"
+        file_type: mov
+        codec: "Avid DNxHD"
+        start_frame: "{start_frame}"
+        end_frame: "{end_frame}"
+        render_start_frame: "{start_frame_minusOne}"
+        additional_write_node_properties:
+            mov64_dnxhd_codec_profile: "DNxHD 422 8-bit 145Mbit"
+
+
+
+workflows:
+    Demo Ingest:
+        - process_plates
+        - copy_original_plate
+        - copy_grade_file_to_shot
+        - copy_grade_file_to_show
+        - generate_plate_quicktime
+        # - copy_lut_file
+
+    Demo Publish:
+        - copy_to_publish
+        - generate_quicktime
+        - copy_render_scene
+        # - update_sg_version_data
+        # - upload_sg_version
+
+    Demo Client Export - EXR Final:
+        - client_export_exr
+        - client_export_shot_grade
+
+    Demo Client Export - Movs:
+        - client_export_mov_jpegs
+        - client_export_mov_mjpeg_encode
+        - client_export_mov_dnxhd

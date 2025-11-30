@@ -1,0 +1,647 @@
+#! C:/Program Files/Nuke16.0v6/nuke-16.0.6.dll -nx
+version 16.0 v6
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="0" w="2559" h="1361" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1896" stretch="1"/>
+            <splitter orientation="2">
+                <split size="774"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="545"/>
+                <dock id="" activePageId="DAG.1">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1" focus="true">
+                <page id="Properties.1"/>
+                <page id="uk.co.thefoundry.backgroundrenderview.1"/>
+                <page id="Scenegraph.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name D:/wolfkrow_demo/config/nuke_scripts/internl_slate.nk
+ frame 1001
+ first_frame 1001
+ last_frame 1024
+ lock_range true
+ format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement OCIO
+ OCIO_config aces_1.2
+ defaultViewerLUT "OCIO LUTs"
+ workingSpaceLUT scene_linear
+ monitorLut "sRGB (ACES)"
+ monitorOutLUT "sRGB (ACES)"
+ int8Lut matte_paint
+ int16Lut texture_paint
+ logLut compositing_log
+ floatLut scene_linear
+}
+Dot {
+ inputs 0
+ name Dot1
+ xpos 1586
+ ypos 52
+}
+set Na161a000 [stack 0]
+Group {
+ name Group1
+ selected true
+ xpos 1438
+ ypos 98
+ addUserKnob {20 User}
+ addUserKnob {1 Row1}
+ Row1 "File Name:"
+ addUserKnob {1 Row1Value l "" -STARTLINE}
+ Row1Value "\{basename\}"
+ addUserKnob {1 Row2}
+ Row2 Version:
+ addUserKnob {1 Row2Value l "" -STARTLINE}
+ Row2Value "v\{version\}"
+ addUserKnob {1 Row3}
+ Row3 Artist:
+ addUserKnob {1 Row3Value l "" -STARTLINE}
+ Row3Value "\{user\}"
+ addUserKnob {1 Row4}
+ Row4 Frames:
+ addUserKnob {1 Row4Value l "" -STARTLINE}
+ Row4Value "\{start_frame\} - \{end_frame\}"
+ addUserKnob {1 Row5}
+ Row5 Date:
+ addUserKnob {1 Row5Value l "" -STARTLINE}
+ Row5Value DATE<%Y/%m/%d>
+ addUserKnob {1 Row6}
+ addUserKnob {1 Row6Value l "" -STARTLINE}
+ addUserKnob {1 Title}
+ Title "\{project_name\}"
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 358
+  ypos -280
+ }
+ Reformat {
+  type "to box"
+  box_width {{"width * .3"}}
+  name Reformat2
+  xpos 358
+  ypos 30
+ }
+ Transform {
+  translate {{"Input1.width * .6" x1001 68} {"Input1.height * .6" x1001 -104}}
+  name Transform3
+  xpos 358
+  ypos 63
+ }
+ Text2 {
+  inputs 0
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row1]\n"
+  old_message {
+   {70 105 108 101 32 78 97 109 101 58 10}
+  }
+  old_expression_markers {
+   {0 9}
+  }
+  box {{"width * .3"} {"Input1.height * .6"} {box.x} {box.y}}
+  xjustify right
+  transforms {
+   {0 2}
+  }
+  cursor_position 20
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row1
+  xpos 468
+  ypos -157
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row2]\n\n"
+  old_message {
+   {86 101 114 115 105 111 110 58 10 10}
+  }
+  old_expression_markers {
+   {0 7}
+  }
+  box {{input.box.x} {"input.box.y - 50"} {box.x} {box.y}}
+  xjustify right
+  transforms {
+   {0 2}
+  }
+  cursor_position 18
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row2
+  xpos 468
+  ypos -133
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row3]\n"
+  old_message {
+   {65 114 116 105 115 116 58 10}
+  }
+  old_expression_markers {
+   {0 6}
+  }
+  box {{input.box.x} {"input.box.y - 50"} {box.x} {box.y}}
+  xjustify right
+  transforms {
+   {0 2}
+  }
+  cursor_position 18
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row3
+  xpos 468
+  ypos -109
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row4]\n"
+  old_message {
+   {70 114 97 109 101 115 58 10}
+  }
+  old_expression_markers {
+   {0 6}
+  }
+  box {{input.box.x} {"input.box.y - 50"} {box.x} {box.y}}
+  xjustify right
+  transforms {
+   {0 2}
+  }
+  cursor_position 18
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row4
+  xpos 468
+  ypos -85
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row5]\n"
+  old_message {
+   {68 97 116 101 58 10}
+  }
+  old_expression_markers {
+   {0 4}
+  }
+  box {{input.box.x} {"input.box.y - 50"} {box.x} {box.y}}
+  xjustify right
+  transforms {
+   {0 2}
+  }
+  cursor_position 18
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row5
+  xpos 468
+  ypos -61
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row6]\n"
+  old_message {
+   {83 117 98 109 105 115 115 105 111 110 32 78 111 116 101 58 10}
+  }
+  old_expression_markers {
+   {0 15}
+  }
+  box {{input.box.x} {"input.box.y - 50"} {box.x} {box.y}}
+  xjustify right
+  transforms {
+   {0 2}
+  }
+  cursor_position 18
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row12
+  xpos 468
+  ypos -37
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row1Value]\n"
+  old_message {
+   {123 115 104 111 116 125 10}
+  }
+  old_expression_markers {
+   {0 5}
+  }
+  box {{"row1.box.x + 20"} {row1.box.y} {box.x} {box.y}}
+  transforms {
+   {0 2}
+  }
+  cursor_position 25
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row6
+  xpos 593
+  ypos -157
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row2Value]\n"
+  old_message {
+   {123 99 108 105 101 110 116 95 98 97 115 101 110 97 109 101 125 10}
+  }
+  old_expression_markers {
+   {0 16}
+  }
+  box {{input.box.x} {"input.box.y - 50"} {box.x} {box.y}}
+  transforms {
+   {0 2}
+  }
+  cursor_position 18
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row7
+  xpos 593
+  ypos -133
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row3Value]\n"
+  old_message {
+   {118 123 99 108 105 101 110 116 95 118 101 114 115 105 111 110 125 10}
+  }
+  old_expression_markers {
+   {0 16}
+  }
+  box {{input.box.x} {"input.box.y - 50"} {box.x} {box.y}}
+  transforms {
+   {0 2}
+  }
+  cursor_position 18
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row8
+  xpos 593
+  ypos -109
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row4Value]\n"
+  old_message {
+   {123 117 115 101 114 125 10}
+  }
+  old_expression_markers {
+   {0 5}
+  }
+  box {{input.box.x} {"input.box.y - 50"} {box.x} {box.y}}
+  transforms {
+   {0 2}
+  }
+  cursor_position 18
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row9
+  xpos 593
+  ypos -85
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row5Value]\n"
+  old_message {
+   {123 115 116 97 114 116 95 102 114 97 109 101 125 32 45 32 123 101 110 100 95 102 114 97 109 101 125 10}
+  }
+  old_expression_markers {
+   {0 26}
+  }
+  box {{input.box.x} {"input.box.y - 50"} {box.x} {box.y}}
+  transforms {
+   {0 2}
+  }
+  cursor_position 18
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row10
+  xpos 593
+  ypos -61
+ }
+ Text2 {
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Row6Value]\n"
+  old_message {
+   {68 65 84 69 60 37 89 37 109 37 100 62 10}
+  }
+  old_expression_markers {
+   {0 11}
+  }
+  box {{input.box.x} {"input.box.y - 50"} {box.x} {box.y}}
+  transforms {
+   {0 2}
+  }
+  cursor_position 18
+  global_font_scale 0.4
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row13
+  xpos 593
+  ypos -37
+ }
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos 593
+  ypos 63
+ }
+ Text2 {
+  inputs 0
+  font_size_toolbar 100
+  font_width_toolbar 100
+  font_height_toolbar 100
+  message "\[value parent.Title]"
+  old_message {
+   {123 112 114 111 106 101 99 116 95 110 97 109 101 125}
+  }
+  old_expression_markers {
+   {0 13}
+  }
+  box {{"width * .3"} {"Input1.height * .8"} {box.x} {box.y}}
+  xjustify center
+  transforms {
+   {0 2}
+  }
+  cursor_position 20
+  center {1024 778}
+  cursor_initialised true
+  autofit_bbox false
+  initial_cursor_position {
+   {-1.5 1180.5}
+  }
+  group_animations {
+   {0}
+   imported:
+   0
+   selected:
+   items:
+   "root transform/"
+  }
+  animation_layers {
+   {1 11 1024 778 0 0 1 1 0 0 0 0}
+  }
+  name row11
+  xpos 821
+  ypos 180
+ }
+ Merge2 {
+  inputs 2
+  name Merge2
+  xpos 593
+  ypos 180
+ }
+ Crop {
+  box {0 0 {Input1.width} {Input1.height}}
+  reformat true
+  crop false
+  name Crop1
+  xpos 593
+  ypos 298
+ }
+ Output {
+  name Output1
+  xpos 593
+  ypos 322
+ }
+end_group
+push $Na161a000
+Switch {
+ inputs 2
+ which {{"frame < input.first_frame"}}
+ name Switch1
+ xpos 1552
+ ypos 179
+}
